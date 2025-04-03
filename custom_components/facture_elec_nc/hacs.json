@@ -1,0 +1,9 @@
+{
+    "name": "Facture Elec NC",
+    "content_in_root": false,
+    "domains": ["facture_elec_nc"],
+    "country": "nc",
+    "homeassistant": "2025.4.0",
+    "render_readme": true
+}
+  
