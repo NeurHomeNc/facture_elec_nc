@@ -2,7 +2,7 @@ DOMAIN = "facture_elec_nc"
 
 CONF_COMMUNE = "commune"
 CONF_PUISSANCE_KVA = "puissance_kva"
-CONF_PRIX_RACHAT = "prix_rachat"
+CONF_PRIX_REVENTE = "prix_revente"
 CONF_SENSOR_IMPORT = "sensor_import"
 CONF_SENSOR_EXPORT = "sensor_export"
 CONF_RESET_DAY = "reset_day"
@@ -13,4 +13,10 @@ COMMUNES = [
     "Boulouparis", "Yaté", "Île des Pins", "Kaala-Gomen", "Moindou", "Touho", "Ouégoa", "Farino", "Sarraméa"
 ]
 
-PUISSANCES_KVA = [3, 6, 9]
+PUISSANCES_KVA = {
+    "3,3": "3,3 kVA",
+    "6,6": "6,6 kVA",
+    "9,9": "> 6,6 kVA"
+}
+
+PRIX_REVENTE_CHOICES = [15, 21]

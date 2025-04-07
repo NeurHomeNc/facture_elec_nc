@@ -1,11 +1,11 @@
 {
     "domain": "facture_elec_nc",
     "name": "Facture Elec NC",
-    "version": "1.0",
-    "documentation": "https://github.com/ton_repo/facture_elec_nc",
+    "version": "1.1",
+    "documentation": "https://github.com/NeurHomeNc/facture_elec_nc",
     "dependencies": [],
     "codeowners": ["NeurHome"],
     "requirements": [],
     "config_flow": true,
-    "iot_class": "local_polling"
+    "iot_class": "calculated"
 }

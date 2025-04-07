@@ -1,0 +1,12 @@
+{
+    "config": {
+    "step": {
+        "user": {
+        "puissance_kva": "Puissance souscrite"
+        }
+    },
+    "options": {
+        "puissance_kva": "Puissance souscrite"
+    }
+    }
+}
