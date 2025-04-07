@@ -270,12 +270,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
         "sensor.montant_tgc"
     ]
 
-    import_sensor = EnergyAmountSensor("Énergie importée (kWh)", sensor_import, reset_day, "energie_importee_kwh", entry_id, mode="import")
+    import_sensor = EnergyAmountSensor("Énergie importée", sensor_import, reset_day, "energie_importee_kwh", entry_id, mode="import")
     sensors.append(import_sensor)
     hass.data["facture_elec_nc_energy_entities"].setdefault(entry_id, []).append(import_sensor)
 
     if sensor_export:
-        export_sensor = EnergyAmountSensor("Énergie exportée (kWh)", sensor_export, reset_day, "energie_exportee_kwh", entry_id, mode="export")
+        export_sensor = EnergyAmountSensor("Énergie exportée", sensor_export, reset_day, "energie_exportee_kwh", entry_id, mode="export")
         sensors.append(export_sensor)
         hass.data["facture_elec_nc_energy_entities"].setdefault(entry_id, []).append(export_sensor)
         sensors.append(ExportEnergySensor("Valeur énergie exportée", "sensor.energie_exportee_kwh", reset_day, prix_revente, "valeur_energie_exportee", entry_id))
