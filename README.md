@@ -1,88 +1,95 @@
-# Facture Elec NC
+# ⚡️ Facture Électricité NC — Intégration Home Assistant
 
-**Facture Elec NC** est une intégration personnalisée Home Assistant qui calcule automatiquement votre facture d'électricité à partir de capteurs de puissance, des tarifs locaux et des paramètres configurables comme la commune, la puissance souscrite, et le prix de rachat.
-
----
-
-## ⚡ Fonctionnalités
-
-- 🧮 Calcul automatique de :
-  - Valeur de l’énergie importée (XPF)
-  - Prime fixe
-  - Montant de la taxe communale
-  - Redevance de comptage
-  - Montant de la TGC
-  - Valeur de l’énergie exportée (si configurée)
-  - Facture totale mensuelle
-
-- 🔁 Réinitialisation automatique des compteurs tous les mois
-- 🏝️ Tarification spécifique à la Nouvelle-Calédonie
-- 📊 Capteurs restaurables après redémarrage
+Une intégration personnalisée pour Home Assistant permettant de calculer automatiquement la facture d'électricité en Nouvelle-Calédonie selon la commune, la puissance souscrite, la consommation (import et export), les taxes locales, la redevance comptage et la TGC.
 
 ---
 
-## 📦 Capteurs créés
+## 📦 Fonctionnalités
 
-| Capteur                          | Description |
-|---------------------------------|-------------|
-| `sensor.energie_importee`       | Énergie importée (kWh) |
-| `sensor.valeur_energie_importee`| Montant en XPF de l’énergie importée |
-| `sensor.prime_fixe`             | Prime fixe mensuelle |
-| `sensor.montant_taxe_communale` | Calcul de la taxe communale |
-| `sensor.redevance_comptage`     | Montant de la redevance |
-| `sensor.montant_tgc`            | TGC appliquée sur la base totalisée |
-| `sensor.energie_exportee`       | Énergie exportée (kWh) — si activée |
-| `sensor.valeur_exportee`        | Valeur exportée en XPF |
-| `sensor.valeur_energie_nette`   | Différence entre import et export |
-| `sensor.facture_totale`         | Total à payer |
-
----
-
-## ⚙️ Configuration
-
-### Via l'interface Home Assistant (config_flow)
-
-- Choix de la commune (pour appliquer la taxe locale)
-- Puissance souscrite : 3.3 / 6.6 / 9.9 kVA
-- Prix de rachat de l’énergie (XPF/kWh)
-- Capteur de puissance importée (obligatoire)
-- Capteur de puissance exportée (optionnel)
-- Jour de remise à zéro mensuelle (1 à 28)
+- Récupération automatique des tarifs depuis [`https://neurhome.nc/data_elec.php`](https://neurhome.nc/data_elec.php)
+- Suivi de la **consommation d'énergie importée et exportée (en kWh)** à partir de capteurs de puissance
+- Calcul automatique :
+  - ✅ Prime fixe
+  - ✅ Valeur énergie importée
+  - ✅ Taxe communale
+  - ✅ Redevance comptage
+  - ✅ Montant TGC
+  - ✅ Valeur énergie exportée
+  - ✅ 💰 Total de la facture
+- Remise à zéro **mensuelle** des compteurs à un jour configurable
+- Bouton de **remise à zéro manuelle** (met aussi à jour le jour de reset)
 
 ---
 
-## 🖼️ Interface
+## 🧾 Entités créées
 
-Cette intégration propose une icône personnalisée (`icon.png`) visible lors de l’ajout dans Home Assistant.
-
----
-
-## 🔧 Installation
-
-### Via HACS (recommandé)
-1. Ajouter ce dépôt comme dépôt personnalisé
-2. Type : Intégration
-3. Installer
-4. Redémarrer Home Assistant
-5. Ajouter l’intégration "Facture Elec NC" via les paramètres
-
-### Manuellement
-1. Copier ce dépôt dans : `custom_components/facture_elec_nc`
-2. Redémarrer Home Assistant
+| Entité                            | Unité | Description |
+|----------------------------------|-------|-------------|
+| `sensor.prime_fixe`              | XPF   | Montant de la prime fixe |
+| `sensor.energie_importee_kwh`    | kWh   | Énergie importée cumulée |
+| `sensor.energie_exportee_kwh`    | kWh   | Énergie exportée cumulée |
+| `sensor.valeur_energie_importee` | XPF   | Montant de l’énergie importée |
+| `sensor.valeur_energie_exportee` | XPF   | Montant de l’énergie exportée (valeur négative) |
+| `sensor.taxe_communale`          | XPF   | Taxe communale en fonction de la commune |
+| `sensor.redevance_comptage`      | XPF   | Redevance fixe annuelle |
+| `sensor.montant_tgc`             | XPF   | TGC sur l’ensemble de la facture |
+| `sensor.total_facture`           | XPF   | Somme totale (import - export + taxes) |
+| `button.remise_a_zero_manuelle`  | -     | Bouton pour remise à zéro manuelle |
 
 ---
 
-## 🧑‍💻 Dépendances
-- Aucune dépendance externe
+## ⚙️ Paramètres configurables
+
+Lors de l'ajout de l'intégration :
+
+- **Commune** 
+- **Puissance souscrite**
+- **Prix de revente** 
+- **Capteur de puissance (import)** 
+- **Capteur de puissance (export)** optionnel
+- **Jour de remise à zéro** mensuelle (par défaut le 1)
+
+> 🔁 Ces paramètres sont **modifiables à tout moment** depuis l’interface (⚙️ Options de l’intégration).
 
 ---
 
-## 📄 Licence
-MIT
+## 🔘 Bouton : Remise à zéro manuelle
+
+En cliquant sur le bouton `Remise à zéro manuelle` :
+
+- Les entités `energie_importee_kwh` et `energie_exportee_kwh` sont remises à 0
+- Le **jour de reset** est mis à jour avec le jour actuel (sauf 30/31 → 29)
 
 ---
 
-## 🤝 Codeowner
-Maintenu par **NeurHome**
+## 🔧 Installation manuelle
 
-> Nouvelle-Calédonie • Énergie • Automatisation
+1. Copie ce dépôt dans `config/custom_components/facture_elec_nc`
+2. Redémarre Home Assistant
+3. Ajoute l’intégration via *Paramètres > Appareils & services > Ajouter une intégration > Facture Électricité NC*
+
+---
+
+## 📁 Fichiers principaux
+
+- `__init__.py` : initialisation et rechargement automatique
+- `sensor.py` : création des entités et logique métier
+- `button.py` : entité pour remise à zéro manuelle
+- `config_flow.py` : interface de configuration initiale
+- `options_flow.py` : interface de modification des paramètres
+- `.translations/fr.json` : labels traduits pour l’interface
+
+---
+
+## 💡 Remarques
+
+- Le calcul repose sur des données publiques fournies par `neurhome.nc`
+- Toutes les valeurs monétaires sont en CFP (XPF)
+- Cette intégration n’est pas encore validée officiellement par l’équipe Home Assistant
+
+---
+
+## 🧪 Support
+
+Créé avec ❤️ pour la Nouvelle-Calédonie 🇳🇨  
+Pour toute suggestion ou bug : crée une *issue* ou contacte le développeur.
