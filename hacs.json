@@ -1,9 +1,10 @@
 {
-    "name": "Facture Elec NC",
-    "content_in_root": false,
-    "domains": ["facture_elec_nc"],
-    "country": "nc",
-    "homeassistant": "2025.4.0",
-    "render_readme": true
+  "name": "Facture Elec NC",
+  "domain": "facture_elec_nc",
+  "author": "NeurHome",
+  "description": "Calcule la facture d'électricité en NC",
+  "country": "nc",
+  "homeassistant": "2025.4.1",
+  "render_readme": true,
+  "logo": "https://github.com/TON_COMPTE/TON_REPO/raw/main/.github/assets/icon.png"
 }
-  
