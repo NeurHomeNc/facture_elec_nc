@@ -91,11 +91,9 @@ class TaxeCommunaleSensor(BaseFactureSensor):
     async def async_update(self):
         prime = self.hass.states.get(self.capteur_prime)
         imp = self.hass.states.get(self.capteur_import)
-        if not prime or not imp:
-            return
         try:
-            prime_val = float(prime.state)
-            imp_val = float(imp.state)
+            prime_val = float(prime.state) if prime and prime.state not in ("unknown", "unavailable") else 0
+            imp_val = float(imp.state) if imp and imp.state not in ("unknown", "unavailable") else 0
         except:
             return
 
@@ -116,13 +114,17 @@ class TGCSensor(BaseFactureSensor):
         self.capteur_redevance = capteur_redevance
 
     async def async_update(self):
-        try:
-            prime = float(self.hass.states.get(self.capteur_prime).state)
-            imp = float(self.hass.states.get(self.capteur_import).state)
-            taxe = float(self.hass.states.get(self.capteur_taxe).state)
-            redevance = float(self.hass.states.get(self.capteur_redevance).state)
-        except:
-            return
+        def get_state(entity_id):
+            state = self.hass.states.get(entity_id)
+            try:
+                return float(state.state) if state and state.state not in ("unknown", "unavailable") else 0
+            except:
+                return 0
+
+        prime = get_state(self.capteur_prime)
+        imp = get_state(self.capteur_import)
+        taxe = get_state(self.capteur_taxe)
+        redevance = get_state(self.capteur_redevance)
 
         async with aiohttp.ClientSession() as session:
             async with session.get(API_URL) as resp:
@@ -131,6 +133,8 @@ class TGCSensor(BaseFactureSensor):
         taux_tgc = data.get("taux_tgc", 0)
         base = prime + imp + taxe + redevance
         self._attr_state = round(base * taux_tgc)
+
+
 
 class ExportEnergySensor(BaseFactureSensor):
     def __init__(self, name, sensor_id, reset_day, prix_revente, unique_id, entry_id):
@@ -159,7 +163,11 @@ class TotalFactureSensor(BaseFactureSensor):
         for entity_id in self.capteurs:
             state = self.hass.states.get(entity_id)
             try:
-                total += float(state.state)
+                value = int(float(state.state))
+                if "export" in entity_id:
+                    total -= value
+                else:
+                    total += value
             except:
                 continue
         self._attr_state = round(total)
@@ -207,12 +215,10 @@ class EnergyAmountSensor(RestoreEntity):
     async def async_update(self):
         now = dt_util.utcnow()
         entity = self.hass.states.get(self.power_sensor_id)
-        if entity is None or entity.state in ("unknown", "unavailable"):
-            return
         try:
-            power = float(entity.state)
+            power = float(entity.state) if entity and entity.state not in ("unknown", "unavailable") else 0.0
         except:
-            return
+            power = 0.0
 
         elapsed = (now - self._last_update).total_seconds() / 3600
         self._last_update = now
